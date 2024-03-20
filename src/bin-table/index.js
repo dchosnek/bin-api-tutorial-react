@@ -130,14 +130,37 @@ function BinTable() {
     };
 
     function updateBin(binId, contents) {
-        const newArray = binList.map(item => {
-            if (item.binId === binId) {
-                return { "binId": binId, "contents": contents }
-            }
-            return item;
-        });
+        const fetchUrl = `http://0.0.0.0:5000/bins/${binId}`;
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRjaG9zbmVrQGNpc2NvLmNvbSIsImV4cCI6MTcxMDk3MTYwMn0.wC_F0LRPLcut93QM9iFqI6TfBd8QJfBLvaUQT0l5nMg';
+        fetch(fetchUrl, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                contents: contents
+            }),
+            credentials: 'include'
+        })
+            .then((response) => {
+                // Check if the request was successful
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // Parse the response body as JSON
+            })
+            .catch((error) => {
+                console.error('There was a problem with your fetch operation:', error);
+            });
+        // const newArray = binList.map(item => {
+        //     if (item.binId === binId) {
+        //         return { "binId": binId, "contents": contents }
+        //     }
+        //     return item;
+        // });
 
-        setBinList(newArray);
+        // setBinList(newArray);
     }
 
     const refreshTable = () => {
