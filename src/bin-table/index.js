@@ -7,15 +7,6 @@ import Tooltip from 'react-bootstrap/Tooltip';
 
 import { ArrowClockwise, LightningFill, PencilSquare, PlusLg, Floppy, Trash } from 'react-bootstrap-icons';
 
-const myBins = [
-    { "binId": "cb1a235f-3bac-4ec2-8f87-a938637344b4", "contents": "the quick brown fox jumped over the lazy dog" },
-    { "binId": "cef08be6-dd7f-4226-a7a6-9ad1856faa3d", "contents": "my second bin" },
-    { "binId": "f1b1d0e9-1964-4a64-a740-dd7adc5eacdc", "contents": "this is my third bin" },
-    { "binId": "95feca92-ad5b-4e63-a680-694f31204034", "contents": "this is my fourth bin" }
-]
-
-
-
 function BinRow(props) {
 
     const [editMode, setEditMode] = useState(false);
@@ -30,10 +21,10 @@ function BinRow(props) {
                 <Button variant="outline-dark" className='button-pad' hidden={editMode} onClick={() => { setEditMode(true) }}><PencilSquare /></Button>
             </OverlayTrigger>
                 <OverlayTrigger placement='top' overlay={<Tooltip>Save</Tooltip>}>
-                    <Button variant="outline-dark" className='button-pad' hidden={!editMode} onClick={() => { 
+                    <Button variant="outline-dark" className='button-pad' hidden={!editMode} onClick={() => {
                         setEditMode(false);
                         props.saveFunc(props.binId, contents);
-                        }}><Floppy /></Button>
+                    }}><Floppy /></Button>
                 </OverlayTrigger>
                 <OverlayTrigger placement='top' overlay={<Tooltip>Delete</Tooltip>}>
                     <Button variant="outline-danger" onClick={() => props.delFunc(props.binId)}><Trash /></Button>
@@ -41,10 +32,10 @@ function BinRow(props) {
             </td>
         </tr>
     );
-}
+};
 
 function BinTable() {
-    const [binList, setBinList] = useState(myBins.slice());
+    const [binList, setBinList] = useState([]);
 
     function createBin() {
         const binId = Math.floor(Math.random() * 100000000);
@@ -56,18 +47,38 @@ function BinTable() {
     function deleteBin(id) {
         const newArray = binList.filter(item => item.binId !== id);
         setBinList(newArray);
-    }
-    
-    function refreshTable() {
-        const newArray = binList.slice();
-        setBinList([]);
-        setTimeout(() => {setBinList(newArray);}, 750);
-    }
+    };
+
+    const getBinContents = (token, binId) => {
+        const fetchUrl = `http://0.0.0.0:5000/bins/${binId}`;
+        console.log(fetchUrl);
+        return fetch(fetchUrl, {
+            method: 'GET', // GET is the default method, so this is optional
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        })
+            .then((response) => {
+                // Check if the request was successful
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // Parse the response body as JSON
+            })
+            .then((data) => {
+                return data.contents;
+            })
+            .catch((error) => {
+                console.error('There was a problem with your fetch operation:', error);
+            });
+    };
 
     function updateBin(binId, contents) {
         const newArray = binList.map(item => {
-            if(item.binId === binId) {
-                return {"binId": binId, "contents": contents }
+            if (item.binId === binId) {
+                return { "binId": binId, "contents": contents }
             }
             return item;
         });
@@ -75,7 +86,44 @@ function BinTable() {
         setBinList(newArray);
     }
 
-
+    const refreshTable = () => {
+        const fetchUrl = 'http://0.0.0.0:5000/bins';
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRjaG9zbmVrQGNpc2NvLmNvbSIsImV4cCI6MTcxMDk3MTYwMn0.wC_F0LRPLcut93QM9iFqI6TfBd8QJfBLvaUQT0l5nMg';
+        fetch(fetchUrl, {
+            method: 'GET', // GET is the default method, so this is optional
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        })
+            .then((response) => {
+                // Check if the request was successful
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // Parse the response body as JSON
+            })
+            .then((data) => {
+                console.log(data.bins);   // Log the bin IDs
+                // Map each binId to a promise that resolves to the structure { binId: binId, contents: contents }
+                const contentPromises = data.bins.map(binId =>
+                    getBinContents(token, binId).then(contents => ({
+                        binId: binId,
+                        contents: contents
+                    }))
+                );
+                // Wait for all promises to resolve
+                return Promise.all(contentPromises);
+            })
+            .then(newArray => {
+                console.log(newArray); // newArray now contains objects with binId and contents
+                setBinList(newArray);
+            })
+            .catch((error) => {
+                console.error('There was a problem with your fetch operation:', error);
+            });
+    };
 
     return (
         <div className='row align-items-center'>
