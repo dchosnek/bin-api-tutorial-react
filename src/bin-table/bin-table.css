@@ -1,0 +1,9 @@
+.BinTable {
+    border-width: 2px;
+    border-color: bisque;
+}
+
+.button-pad {
+    margin-right: 4px;
+    margin-left: 0px;
+}
