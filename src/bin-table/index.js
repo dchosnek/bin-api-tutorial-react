@@ -17,10 +17,10 @@ function BinRow(props) {
     const [contents, setContents] = useState(props.binContents);
 
     // this is needed to refresh the row if the contents ever change
-    useEffect(()=>{
+    useEffect(() => {
         setContents(props.binContents);
         setEditMode(false);
-    },[props])
+    }, [props])
 
     return (
         <tr>
@@ -52,11 +52,6 @@ function BinTable() {
     const [binList, setBinList] = useState([]);
 
     function createBin() {
-        // const binId = Math.floor(Math.random() * 100000000);
-        // const contents = '';
-        // setBinList([...binList, { "binId": binId, "contents": contents }])
-        // console.log(binList);
-
         const fetchUrl = `http://0.0.0.0:5000/bins`;
         const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRjaG9zbmVrQGNpc2NvLmNvbSIsImV4cCI6MTcxMDk3MTYwMn0.wC_F0LRPLcut93QM9iFqI6TfBd8QJfBLvaUQT0l5nMg';
         fetch(fetchUrl, {
@@ -83,8 +78,30 @@ function BinTable() {
     };
 
     function deleteBin(id) {
-        const newArray = binList.filter(item => item.binId !== id);
-        setBinList(newArray);
+        const fetchUrl = `http://0.0.0.0:5000/bins/${id}`;
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRjaG9zbmVrQGNpc2NvLmNvbSIsImV4cCI6MTcxMDk3MTYwMn0.wC_F0LRPLcut93QM9iFqI6TfBd8QJfBLvaUQT0l5nMg';
+        console.log(fetchUrl);
+        fetch(fetchUrl, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        })
+            .then((response) => {
+                // Check if the request was successful
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+            })
+            .then(() => {
+                const newArray = binList.filter(item => item.binId !== id);
+                setBinList(newArray);
+            })
+            .catch((error) => {
+                console.error('There was a problem with your fetch operation:', error);
+            });
     };
 
     const getBinContents = (token, binId) => {
