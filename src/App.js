@@ -1,5 +1,4 @@
 import './App.css';
-import './bin-table';
 import BinTable from './bin-table';
 import Container from 'react-bootstrap/Container';
 

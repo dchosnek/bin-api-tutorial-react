@@ -1,59 +1,20 @@
 import './bin-table.css';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 
-import { ArrowClockwise, LightningFill, PencilSquare, PlusLg, Floppy, Trash } from 'react-bootstrap-icons';
+import { ArrowClockwise, LightningFill, PlusLg } from 'react-bootstrap-icons';
 
-// Create a single row for a table with "binId", "contents", and action buttons
-// as the three columns. The action buttons allow a user to edit the contents
-// of that row's bin, save their edits, or delete that bin entirely.
-// props: binId, binContents
-function BinRow(props) {
-
-    const [editMode, setEditMode] = useState(false);
-    const [contents, setContents] = useState(props.binContents);
-
-    // this is needed to refresh the row if the contents ever change
-    useEffect(() => {
-        setContents(props.binContents);
-        setEditMode(false);
-    }, [props])
-
-    return (
-        <tr>
-            {/* column 1 */}
-            <td>{props.binId}</td>
-            {/* column 2: either bin contents or an input box to edit the contents */}
-            <td hidden={editMode}>{contents}</td>
-            <td hidden={!editMode}><input type='text' value={contents} size={contents.length} onChange={(event) => { setContents(event.target.value) }} /></td>
-            {/* column 3: action buttons (edit, save, delete) */}
-            <td>
-                <OverlayTrigger placement='top' overlay={<Tooltip>Edit</Tooltip>}>
-                    <Button variant="outline-dark" className='button-pad' hidden={editMode} onClick={() => { setEditMode(true) }}><PencilSquare /></Button>
-                </OverlayTrigger>
-                <OverlayTrigger placement='top' overlay={<Tooltip>Save</Tooltip>}>
-                    <Button variant="outline-dark" className='button-pad' hidden={!editMode} onClick={() => {
-                        setEditMode(false);
-                        props.saveFunc(props.binId, contents);
-                    }}><Floppy /></Button>
-                </OverlayTrigger>
-                <OverlayTrigger placement='top' overlay={<Tooltip>Delete</Tooltip>}>
-                    <Button variant="outline-danger" onClick={() => props.delFunc(props.binId)}><Trash /></Button>
-                </OverlayTrigger>
-            </td>
-        </tr>
-    );
-};
+import BinRow from '../bin-row';
 
 function BinTable() {
     const [binList, setBinList] = useState([]);
 
     function createBin() {
         const fetchUrl = `http://0.0.0.0:5000/bins`;
-        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRjaG9zbmVrQGNpc2NvLmNvbSIsImV4cCI6MTcxMDk3MTYwMn0.wC_F0LRPLcut93QM9iFqI6TfBd8QJfBLvaUQT0l5nMg';
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRjaG9zbmVrQGNpc2NvLmNvbSIsImV4cCI6MTcxMDk4NjEyMH0.3YR9ZDmPYe8o086nofajDk5HGTeOcNI2R46q4Cbs95s';
         fetch(fetchUrl, {
             method: 'POST',
             headers: {
@@ -79,7 +40,7 @@ function BinTable() {
 
     function deleteBin(id) {
         const fetchUrl = `http://0.0.0.0:5000/bins/${id}`;
-        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRjaG9zbmVrQGNpc2NvLmNvbSIsImV4cCI6MTcxMDk3MTYwMn0.wC_F0LRPLcut93QM9iFqI6TfBd8QJfBLvaUQT0l5nMg';
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRjaG9zbmVrQGNpc2NvLmNvbSIsImV4cCI6MTcxMDk4NjEyMH0.3YR9ZDmPYe8o086nofajDk5HGTeOcNI2R46q4Cbs95s';
         console.log(fetchUrl);
         fetch(fetchUrl, {
             method: 'DELETE',
@@ -131,7 +92,7 @@ function BinTable() {
 
     function updateBin(binId, contents) {
         const fetchUrl = `http://0.0.0.0:5000/bins/${binId}`;
-        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRjaG9zbmVrQGNpc2NvLmNvbSIsImV4cCI6MTcxMDk3MTYwMn0.wC_F0LRPLcut93QM9iFqI6TfBd8QJfBLvaUQT0l5nMg';
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRjaG9zbmVrQGNpc2NvLmNvbSIsImV4cCI6MTcxMDk4NjEyMH0.3YR9ZDmPYe8o086nofajDk5HGTeOcNI2R46q4Cbs95s';
         fetch(fetchUrl, {
             method: 'PUT',
             headers: {
@@ -150,22 +111,20 @@ function BinTable() {
                 }
                 return response.json(); // Parse the response body as JSON
             })
+            .then(() => {
+                const newArray = binList.map(item => 
+                    item.binId === binId ? { ...item, contents: contents } : item
+                );
+                setBinList(newArray);
+            })
             .catch((error) => {
                 console.error('There was a problem with your fetch operation:', error);
             });
-        // const newArray = binList.map(item => {
-        //     if (item.binId === binId) {
-        //         return { "binId": binId, "contents": contents }
-        //     }
-        //     return item;
-        // });
-
-        // setBinList(newArray);
     }
 
     const refreshTable = () => {
         const fetchUrl = 'http://0.0.0.0:5000/bins';
-        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRjaG9zbmVrQGNpc2NvLmNvbSIsImV4cCI6MTcxMDk3MTYwMn0.wC_F0LRPLcut93QM9iFqI6TfBd8QJfBLvaUQT0l5nMg';
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRjaG9zbmVrQGNpc2NvLmNvbSIsImV4cCI6MTcxMDk4NjEyMH0.3YR9ZDmPYe8o086nofajDk5HGTeOcNI2R46q4Cbs95s';
         fetch(fetchUrl, {
             method: 'GET', // GET is the default method, so this is optional
             headers: {
