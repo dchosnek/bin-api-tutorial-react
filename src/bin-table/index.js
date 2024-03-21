@@ -161,7 +161,7 @@ function BinTable(props) {
     return (
         <div className='row align-items-center'>
             <div className='col'>
-                <Table hover>
+                <Table hover bordered>
                     <thead>
                         <tr>
                             <th>binId</th>

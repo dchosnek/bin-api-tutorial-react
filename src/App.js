@@ -1,12 +1,24 @@
 import './App.css';
 import BinTable from './bin-table';
+import TokenForm from './fetch-token';
 import Container from 'react-bootstrap/Container';
+import { useState } from 'react';
 
 function App() {
+
+  const [bearerToken, setBearerToken] = useState('');
+
   return (
     <Container>
       <div className="App">
-        <BinTable token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRjaG9zbmVrQGNpc2NvLmNvbSIsImV4cCI6MTcxMTAwMTM5NX0.Rg21wdgvCz20DNo1yAMLqrnbXFVqUOIT_0JB8RtcomQ' />
+        <Container>
+          <div className='row'>
+            <TokenForm bearerToken={bearerToken} setBearerToken={setBearerToken} />
+          </div>
+          <div className={`row mt-5 ${bearerToken==='' && 'invisible'}`}>
+            <BinTable token={bearerToken} />
+          </div>
+        </Container>
       </div>
     </Container>
   );
