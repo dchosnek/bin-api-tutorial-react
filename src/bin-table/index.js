@@ -9,12 +9,12 @@ import { ArrowClockwise, LightningFill, PlusLg } from 'react-bootstrap-icons';
 
 import BinRow from '../bin-row';
 
-function BinTable() {
+function BinTable(props) {
     const [binList, setBinList] = useState([]);
 
     function createBin() {
         const fetchUrl = `http://0.0.0.0:5000/bins`;
-        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRjaG9zbmVrQGNpc2NvLmNvbSIsImV4cCI6MTcxMDk4NjEyMH0.3YR9ZDmPYe8o086nofajDk5HGTeOcNI2R46q4Cbs95s';
+        const token = props.token;
         fetch(fetchUrl, {
             method: 'POST',
             headers: {
@@ -40,8 +40,7 @@ function BinTable() {
 
     function deleteBin(id) {
         const fetchUrl = `http://0.0.0.0:5000/bins/${id}`;
-        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRjaG9zbmVrQGNpc2NvLmNvbSIsImV4cCI6MTcxMDk4NjEyMH0.3YR9ZDmPYe8o086nofajDk5HGTeOcNI2R46q4Cbs95s';
-        console.log(fetchUrl);
+        const token = props.token;
         fetch(fetchUrl, {
             method: 'DELETE',
             headers: {
@@ -92,7 +91,7 @@ function BinTable() {
 
     function updateBin(binId, contents) {
         const fetchUrl = `http://0.0.0.0:5000/bins/${binId}`;
-        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRjaG9zbmVrQGNpc2NvLmNvbSIsImV4cCI6MTcxMDk4NjEyMH0.3YR9ZDmPYe8o086nofajDk5HGTeOcNI2R46q4Cbs95s';
+        const token = props.token;
         fetch(fetchUrl, {
             method: 'PUT',
             headers: {
@@ -124,7 +123,7 @@ function BinTable() {
 
     const refreshTable = () => {
         const fetchUrl = 'http://0.0.0.0:5000/bins';
-        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRjaG9zbmVrQGNpc2NvLmNvbSIsImV4cCI6MTcxMDk4NjEyMH0.3YR9ZDmPYe8o086nofajDk5HGTeOcNI2R46q4Cbs95s';
+        const token = props.token;
         fetch(fetchUrl, {
             method: 'GET', // GET is the default method, so this is optional
             headers: {
