@@ -65,7 +65,8 @@ function TokenForm(props) {
                 </Col>
                 <Col>
                     <Button
-                        primary size='lg'
+                        variant='primary' 
+                        size='lg'
                         onClick={handleClick}
                         disabled={props.bearerToken !== '' || !isEmailValid}>Submit
                     </Button>
