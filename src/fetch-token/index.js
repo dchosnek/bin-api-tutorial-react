@@ -1,25 +1,26 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-// import Spinner from 'react-bootstrap/Spinner';
+import Overlay from 'react-bootstrap/Overlay';
+import Tooltip from 'react-bootstrap/Tooltip';
 
 import { Copy } from 'react-bootstrap-icons';
 
 function TokenForm(props) {
 
     const [email, setEmail] = useState('');
-    const [isInputDisabled, setIsInputDisabled] = useState(false);
     const [isEmailValid, setIsEmailValid] = useState(false);
-    // const [token, setToken] = useState('');
+    const [showCopyMsg, setShowCopyMsg] = useState(false);
+
+    // used to refer to the copy button
+    const copyBtnRef = useRef(null);
 
     function handleClick() {
-        if (isEmailValid) {
-            setIsInputDisabled(true);
-        }
+
         const fetchUrl = `http://127.0.0.1:5000/token?email=${encodeURIComponent(email)}`;
 
         fetch(fetchUrl)
@@ -38,6 +39,8 @@ function TokenForm(props) {
             });
     }
 
+    // when the user types their email, update the {email} variable and
+    // set a variable indicating the email is a valid format
     const handleChange = (event) => {
         setEmail(event.target.value);
         setIsEmailValid(event.target.checkValidity());
@@ -62,7 +65,7 @@ function TokenForm(props) {
                     <Button
                         primary size='lg'
                         onClick={handleClick}
-                        disabled={props.bearerToken !== ''}>Submit
+                        disabled={props.bearerToken !== '' || !isEmailValid}>Submit
                     </Button>
                 </Col>
             </Row>
@@ -73,8 +76,22 @@ function TokenForm(props) {
                         <Form.Control
                             type='text'
                             value={props.bearerToken}
+                            onChange={(event) => { props.setBearerToken(event.target.value); }}
                         />
-                        <Button variant='outline-secondary' onClick={() => { navigator.clipboard.writeText(props.bearerToken) }}><Copy /></Button>
+                        <Button variant='outline-secondary'
+                            ref={copyBtnRef}
+                            onClick={() => {
+                                navigator.clipboard.writeText(props.bearerToken);
+                                setShowCopyMsg(true);
+                                setTimeout(() => {
+                                    setShowCopyMsg(false);
+                                }, 1000);
+                            }}><Copy /></Button>
+                        <Overlay target={copyBtnRef} show={showCopyMsg} placement="right">
+                            <Tooltip id="overlay-example">
+                                Copied!
+                            </Tooltip>
+                        </Overlay>
                     </InputGroup>
                 </Col>
                 {/* empty column for sizing/layout purposes */}
