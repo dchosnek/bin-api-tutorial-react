@@ -9,11 +9,13 @@ import { ArrowClockwise, LightningFill, PlusLg } from 'react-bootstrap-icons';
 
 import BinRow from '../bin-row';
 
+import { API_BASE_URL } from '../constants';
+
 function BinTable(props) {
     const [binList, setBinList] = useState([]);
 
     function createBin() {
-        const fetchUrl = `http://0.0.0.0:5000/bins`;
+        const fetchUrl = `${API_BASE_URL}/bins`;
         const token = props.token;
         fetch(fetchUrl, {
             method: 'POST',
@@ -39,7 +41,7 @@ function BinTable(props) {
     };
 
     function deleteBin(id) {
-        const fetchUrl = `http://0.0.0.0:5000/bins/${id}`;
+        const fetchUrl = `${API_BASE_URL}/bins/${id}`;
         const token = props.token;
         fetch(fetchUrl, {
             method: 'DELETE',
@@ -65,7 +67,7 @@ function BinTable(props) {
     };
 
     const getBinContents = (token, binId) => {
-        const fetchUrl = `http://0.0.0.0:5000/bins/${binId}`;
+        const fetchUrl = `${API_BASE_URL}/bins/${binId}`;
         return fetch(fetchUrl, {
             method: 'GET', // GET is the default method, so this is optional
             headers: {
@@ -90,7 +92,7 @@ function BinTable(props) {
     };
 
     function updateBin(binId, contents) {
-        const fetchUrl = `http://0.0.0.0:5000/bins/${binId}`;
+        const fetchUrl = `${API_BASE_URL}/bins/${binId}`;
         const token = props.token;
         fetch(fetchUrl, {
             method: 'PUT',
@@ -122,7 +124,7 @@ function BinTable(props) {
     }
 
     const refreshTable = () => {
-        const fetchUrl = 'http://0.0.0.0:5000/bins';
+        const fetchUrl = `${API_BASE_URL}/bins`;
         const token = props.token;
         fetch(fetchUrl, {
             method: 'GET', // GET is the default method, so this is optional

@@ -10,6 +10,8 @@ import Tooltip from 'react-bootstrap/Tooltip';
 
 import { Copy } from 'react-bootstrap-icons';
 
+import { API_BASE_URL } from '../constants';
+
 function TokenForm(props) {
 
     const [email, setEmail] = useState('');
@@ -21,7 +23,7 @@ function TokenForm(props) {
 
     function handleClick() {
 
-        const fetchUrl = `http://127.0.0.1:5000/token?email=${encodeURIComponent(email)}`;
+        const fetchUrl = `${API_BASE_URL}/token?email=${encodeURIComponent(email)}`;
 
         fetch(fetchUrl)
             .then((response) => {
