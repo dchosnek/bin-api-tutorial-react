@@ -166,9 +166,9 @@ function BinTable(props) {
                 <Table hover bordered>
                     <thead>
                         <tr>
-                            <th>binId</th>
-                            <th>contents</th>
-                            <th><LightningFill /></th>
+                            <th className='fit-content'>binId</th>
+                            <th className='fill-space'>contents</th>
+                            <th className='action-col'><LightningFill /></th>
                         </tr>
                     </thead>
                     <tbody>

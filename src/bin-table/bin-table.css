@@ -2,3 +2,20 @@
     margin-right: 4px;
     margin-left: 0px;
 }
+
+table {
+    table-layout: fixed;
+}
+
+.fit-content {
+    width: 30%; /* A trick to make these columns only as wide as their content */
+    white-space: nowrap; /* Prevents content from wrapping */
+  }
+  
+.fill-space {
+    width: auto; /* Takes up remaining space */
+}
+
+.action-col {
+    width: 110px;
+}
