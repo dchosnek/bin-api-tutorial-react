@@ -4,7 +4,6 @@ import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
-import Alert from 'react-bootstrap/Alert';
 
 import { ArrowClockwise, LightningFill, PlusLg } from 'react-bootstrap-icons';
 
@@ -165,9 +164,6 @@ function BinTable(props) {
     return (
         <Container>
             <div className='row align-items-center'>
-                <Alert key='warning' variant='warning' hidden={binList.length}>You have no bins. Press the <Button variant='success'><PlusLg /></Button> button to create a bin.</Alert>
-            </div>
-            <div className='row align-items-center'>
                 <div className='col'>
                     <Table hover bordered>
                         <thead>
@@ -185,10 +181,10 @@ function BinTable(props) {
                                 <td></td>
                                 <td></td>
                                 <td>
-                                    <OverlayTrigger placement='auto' overlay={<Tooltip>Create new bin</Tooltip>}>
+                                    <OverlayTrigger placement='bottom-end' show={!binList.length && props.pageVisible} overlay={<Tooltip>You have no bins. Click here to create one.</Tooltip>}>
                                         <Button variant='success' className='button-pad' onClick={createBin}><PlusLg /></Button>
                                     </OverlayTrigger>
-                                    <OverlayTrigger placement='auto' overlay={<Tooltip>Refresh table</Tooltip>}>
+                                    <OverlayTrigger placement='top' overlay={<Tooltip>Refresh table</Tooltip>}>
                                         <Button variant='primary' className='button-pad' onClick={refreshTable}><ArrowClockwise /></Button>
                                     </OverlayTrigger>
                                 </td>

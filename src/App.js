@@ -43,7 +43,7 @@ function App() {
             <div className='row mt-3'><h3>Your bins</h3></div>
             <div className='row'>Use the table below to create, update (save), and delete bins. Every button except the edit button will generate one or more API calls.</div>
             <div className='row mt-3'>
-              <BinTable token={bearerToken} />
+              <BinTable token={bearerToken} pageVisible={!homePage} />
             </div>
           </Container>
       </Container>
