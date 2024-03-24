@@ -6,7 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import Tooltip from 'react-bootstrap/Tooltip';
 
-import { ArrowClockwise, LightningFill, PlusLg } from 'react-bootstrap-icons';
+import { ArrowClockwise, PlusLg } from 'react-bootstrap-icons';
 
 import BinRow from '../bin-row';
 
@@ -170,25 +170,20 @@ function BinTable(props) {
                         <tr>
                             <th className='fit-content'>binId</th>
                             <th className='fill-space'>contents</th>
-                            <th className='action-col'><LightningFill /></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {binList.map(e => (
-                            <BinRow binId={e.binId} binContents={e.contents} key={e.binId} delFunc={deleteBin} saveFunc={updateBin} />
-                        ))}
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td>
+                            <th className='action-col'>
                                 <OverlayTrigger placement='bottom-end' show={!binList.length && props.pageVisible} overlay={<Tooltip>You have no bins. Click here to create one.</Tooltip>}>
                                     <Button variant='success' className='button-pad' onClick={createBin}><PlusLg /></Button>
                                 </OverlayTrigger>
                                 <OverlayTrigger placement='top' overlay={<Tooltip>Refresh table</Tooltip>}>
                                     <Button variant='primary' className='button-pad' onClick={refreshTable}><ArrowClockwise /></Button>
                                 </OverlayTrigger>
-                            </td>
+                            </th>
                         </tr>
+                    </thead>
+                    <tbody>
+                        {binList.map(e => (
+                            <BinRow binId={e.binId} binContents={e.contents} key={e.binId} delFunc={deleteBin} saveFunc={updateBin} />
+                        ))}
                     </tbody>
                 </Table>
             </Row>
