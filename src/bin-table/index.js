@@ -1,8 +1,9 @@
 import './bin-table.css';
 import { useState } from 'react';
-import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Row from 'react-bootstrap/Row';
+import Table from 'react-bootstrap/Table';
 import Tooltip from 'react-bootstrap/Tooltip';
 
 import { ArrowClockwise, LightningFill, PlusLg } from 'react-bootstrap-icons';
@@ -163,36 +164,34 @@ function BinTable(props) {
 
     return (
         <Container>
-            <div className='row align-items-center'>
-                <div className='col'>
-                    <Table hover bordered>
-                        <thead>
-                            <tr>
-                                <th className='fit-content'>binId</th>
-                                <th className='fill-space'>contents</th>
-                                <th className='action-col'><LightningFill /></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {binList.map(e => (
-                                <BinRow binId={e.binId} binContents={e.contents} key={e.binId} delFunc={deleteBin} saveFunc={updateBin} />
-                            ))}
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td>
-                                    <OverlayTrigger placement='bottom-end' show={!binList.length && props.pageVisible} overlay={<Tooltip>You have no bins. Click here to create one.</Tooltip>}>
-                                        <Button variant='success' className='button-pad' onClick={createBin}><PlusLg /></Button>
-                                    </OverlayTrigger>
-                                    <OverlayTrigger placement='top' overlay={<Tooltip>Refresh table</Tooltip>}>
-                                        <Button variant='primary' className='button-pad' onClick={refreshTable}><ArrowClockwise /></Button>
-                                    </OverlayTrigger>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </Table>
-                </div>
-            </div>
+            <Row>
+                <Table hover bordered>
+                    <thead>
+                        <tr>
+                            <th className='fit-content'>binId</th>
+                            <th className='fill-space'>contents</th>
+                            <th className='action-col'><LightningFill /></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {binList.map(e => (
+                            <BinRow binId={e.binId} binContents={e.contents} key={e.binId} delFunc={deleteBin} saveFunc={updateBin} />
+                        ))}
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <OverlayTrigger placement='bottom-end' show={!binList.length && props.pageVisible} overlay={<Tooltip>You have no bins. Click here to create one.</Tooltip>}>
+                                    <Button variant='success' className='button-pad' onClick={createBin}><PlusLg /></Button>
+                                </OverlayTrigger>
+                                <OverlayTrigger placement='top' overlay={<Tooltip>Refresh table</Tooltip>}>
+                                    <Button variant='primary' className='button-pad' onClick={refreshTable}><ArrowClockwise /></Button>
+                                </OverlayTrigger>
+                            </td>
+                        </tr>
+                    </tbody>
+                </Table>
+            </Row>
         </Container>
     );
 }
