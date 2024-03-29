@@ -32,10 +32,10 @@ function BinRow(props) {
             {/* column 3: action buttons (edit, save, delete) */}
             <td>
                 <OverlayTrigger placement='left' overlay={<Tooltip>Edit</Tooltip>}>
-                    <Button variant='outline-dark' className='button-pad' hidden={editMode} onClick={() => { setEditMode(true) }}><PencilSquare /></Button>
+                    <Button variant='outline-light' className='button-pad' hidden={editMode} onClick={() => { setEditMode(true) }}><PencilSquare /></Button>
                 </OverlayTrigger>
                 <OverlayTrigger placement='left' overlay={<Tooltip>Save</Tooltip>}>
-                    <Button variant='outline-dark' className='button-pad' hidden={!editMode} onClick={() => {
+                    <Button variant='outline-light' className='button-pad' hidden={!editMode} onClick={() => {
                         setEditMode(false);
                         props.saveFunc(props.binId, contents);
                     }}><Floppy /></Button>

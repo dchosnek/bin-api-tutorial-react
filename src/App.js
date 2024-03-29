@@ -17,7 +17,7 @@ function App() {
     <Container>
 
       {/* NAVBAR */}
-      <Navbar expand="lg" bg='dark' data-bs-theme='dark'>
+      <Navbar expand="lg" data-bs-theme='dark'>
         <Container>
           <Navbar.Brand href="#" onClick={()=>{ setHomePage(true); }}><InboxesFill /> Bin API Tutorial</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
