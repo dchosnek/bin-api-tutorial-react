@@ -19,6 +19,7 @@ function BinTable(props) {
     function createBin() {
         const fetchUrl = `${API_BASE_URL}/bins`;
         const token = props.token;
+        let status = '';
         fetch(fetchUrl, {
             method: 'POST',
             headers: {
@@ -32,18 +33,28 @@ function BinTable(props) {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
+                status = response.status;
                 return response.json(); // Parse the response body as JSON
             })
             .then((data) => {
-                setBinList([...binList, { "binId": data.binId, "contents": data.contents }]);
+                props.setAlertList(prevList => [...prevList,
+                    {
+                        status: status,
+                        message: `Create bin ${data.binId}`,
+                        type: 'success',
+                        method: 'POST',
+                        id: `post${data.binId}${Date.now()}`
+                    }
+                ]);
+                setBinList(prevList => [...prevList, { "binId": data.binId, "contents": data.contents }]);
             })
             .catch((error) => {
                 console.error('There was a problem with your fetch operation:', error);
             });
     };
 
-    function deleteBin(id) {
-        const fetchUrl = `${API_BASE_URL}/bins/${id}`;
+    function deleteBin(binId) {
+        const fetchUrl = `${API_BASE_URL}/bins/${binId}`;
         const token = props.token;
         fetch(fetchUrl, {
             method: 'DELETE',
@@ -58,10 +69,19 @@ function BinTable(props) {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
+                props.setAlertList(prevList => [...prevList,
+                    {
+                        status: response.status,
+                        message: `Delete bin ${binId}`,
+                        type: 'success',
+                        method: 'DELETE',
+                        id: `delete${binId}${Date.now()}`
+                    }
+                ]);
+                return response;
             })
             .then(() => {
-                const newArray = binList.filter(item => item.binId !== id);
-                setBinList(newArray);
+                setBinList(prevList => prevList.filter(item => item.binId !== binId));
             })
             .catch((error) => {
                 console.error('There was a problem with your fetch operation:', error);
@@ -112,7 +132,16 @@ function BinTable(props) {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                return response.json(); // Parse the response body as JSON
+                props.setAlertList(prevList => [...prevList,
+                    {
+                        status: response.status,
+                        message: `Update bin contents for ${binId}`,
+                        type: 'success',
+                        method: 'PUT',
+                        id: `put${binId}${Date.now()}`
+                    }
+                ]);
+                return response;
             })
             .then(() => {
                 const newArray = binList.map(item =>
@@ -141,6 +170,15 @@ function BinTable(props) {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
+                props.setAlertList(prevList => [...prevList,
+                    {
+                        status: response.status,
+                        message: 'Retrieve list of all bins',
+                        type: 'success',
+                        method: 'GET',
+                        id: `getall${Date.now()}`
+                    }
+                ]);
                 return response.json(); // Parse the response body as JSON
             })
             .then((data) => {
