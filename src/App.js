@@ -41,7 +41,7 @@ function App() {
             <div className='row mt-3'><h3>Your token</h3></div>
             <div className='row'>Use this form to generate a token for API access.</div>
             <div className='row mt-3'>
-              <TokenForm bearerToken={bearerToken} setBearerToken={setBearerToken} />
+              <TokenForm bearerToken={bearerToken} setBearerToken={setBearerToken} setAlertList={setAlertList} />
             </div>
           </Container>
           <Container hidden={homePage}>

@@ -1,15 +1,18 @@
 import { useRef, useState } from 'react';
-import Container from 'react-bootstrap/Container';
+
+// import bootstrap components and icons
 import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Overlay from 'react-bootstrap/Overlay';
+import Row from 'react-bootstrap/Row';
 import Tooltip from 'react-bootstrap/Tooltip';
 
 import { Copy } from 'react-bootstrap-icons';
 
+// import constants
 import { API_BASE_URL } from '../constants';
 
 function TokenForm(props) {
@@ -29,7 +32,7 @@ function TokenForm(props) {
             .then((response) => {
                 // Check if the request was successful
                 if (!response.ok) {
-                    throw new Error(response.text);
+                    throw new Error(response.status);
                 }
                 return response.json(); // Parse the response body as JSON
             })
@@ -37,7 +40,16 @@ function TokenForm(props) {
                 props.setBearerToken(data.token);   // save the token to state
             })
             .catch((error) => {
-                console.error('There was a problem with your fetch operation:', error);
+                // display an error message
+                props.setAlertList(prevList => [...prevList,
+                    {
+                        status: error.message,  // HTTP status code
+                        message: `ERROR ${error.message} retrieving token`,
+                        type: 'error',
+                        method: 'GET',
+                        id: `gettoken${Date.now()}`
+                    }
+                    ]);
             });
     }
 
