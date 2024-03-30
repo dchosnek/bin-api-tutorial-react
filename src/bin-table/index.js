@@ -31,7 +31,7 @@ function BinTable(props) {
             .then((response) => {
                 // Check if the request was successful
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error(response.status);
                 }
                 status = response.status;
                 return response.json(); // Parse the response body as JSON
@@ -49,7 +49,15 @@ function BinTable(props) {
                 setBinList(prevList => [...prevList, { "binId": data.binId, "contents": data.contents }]);
             })
             .catch((error) => {
-                console.error('There was a problem with your fetch operation:', error);
+                props.setAlertList(prevList => [...prevList,
+                    {
+                        status: error.message,
+                        message: `ERROR ${error.message} creating a bin`,
+                        type: 'error',
+                        method: 'POST',
+                        id: `post${Date.now()}`
+                    }
+                    ]);
             });
     };
 
@@ -113,6 +121,15 @@ function BinTable(props) {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
+                props.setAlertList(prevList => [...prevList,
+                    {
+                        status: response.status,
+                        message: `Get bin contents for ${binId}`,
+                        type: 'success',
+                        method: 'GET',
+                        id: `get${binId}${Date.now()}`
+                    }
+                    ]);
                 return response.json(); // Parse the response body as JSON
             })
             .then((data) => {
@@ -218,7 +235,7 @@ function BinTable(props) {
                         status: error.message,
                         message: `ERROR ${error.message} attempting to retrieve bin list`,
                         type: 'error',
-                        method: 'PUT',
+                        method: 'GET',
                         id: `getall${Date.now()}`
                     }
                     ]);
