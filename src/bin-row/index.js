@@ -71,7 +71,7 @@ function BinRow(props) {
             <td>{props.binId}</td>
             {/* column 2: either bin contents or an input box to edit the contents */}
             <td hidden={editMode}>{contents}</td>
-            <td hidden={!editMode}><input type='text' value={contents} ref={inputRef} size={contents.length} onKeyDown={handleKeyDown} onFocus={() => { console.log('focus!') }} onChange={(event) => { setContents(event.target.value) }} /></td>
+            <td hidden={!editMode}><input type='text' value={contents} ref={inputRef} size={contents.length} onKeyDown={handleKeyDown} onChange={(event) => { setContents(event.target.value) }} /></td>
             {/* column 3: action buttons (edit, save, delete) */}
             <td>
                 <OverlayTrigger placement='left' overlay={<Tooltip>Edit</Tooltip>}>
