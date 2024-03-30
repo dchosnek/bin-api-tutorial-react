@@ -140,7 +140,7 @@ function BinTable(props) {
             .then((response) => {
                 // Check if the request was successful
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error(response.status);
                 }
                 props.setAlertList(prevList => [...prevList,
                 {
@@ -151,16 +151,23 @@ function BinTable(props) {
                     id: `put${binId}${Date.now()}`
                 }
                 ]);
-                return response;
-            })
-            .then(() => {
+
+                // update the bin list to show the bin with updated contents
                 const newArray = binList.map(item =>
                     item.binId === binId ? { ...item, contents: contents } : item
                 );
                 setBinList(newArray);
             })
             .catch((error) => {
-                console.error('There was a problem with your fetch operation:', error);
+                props.setAlertList(prevList => [...prevList,
+                    {
+                        status: error.message,
+                        message: `ERROR ${error.message} attempting to update bin ${binId}`,
+                        type: 'error',
+                        method: 'PUT',
+                        id: `put${binId}${Date.now()}`
+                    }
+                    ]);
             });
     }
 
