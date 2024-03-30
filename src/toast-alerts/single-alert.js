@@ -21,7 +21,7 @@ function SingleAlert(props) {
     }, []); // Empty dependency array ensures this effect runs only once
 
     return (
-        <Toast onClose={() => { setShow(false); }} show={show} delay={3000} autohide>
+        <Toast onClose={() => { setShow(false); }} show={show} delay={3000} bg={props.type === 'error' ? 'danger' : undefined} autohide>
             <Toast.Header>
                 <CheckCircleFill hidden={props.type !== 'success'} className='me-2' />
                 <ExclamationCircleFill hidden={props.type !== 'error'} className='me-2' />
