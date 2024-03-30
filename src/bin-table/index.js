@@ -38,13 +38,13 @@ function BinTable(props) {
             })
             .then((data) => {
                 props.setAlertList(prevList => [...prevList,
-                    {
-                        status: status,
-                        message: `Create bin ${data.binId}`,
-                        type: 'success',
-                        method: 'POST',
-                        id: `post${data.binId}${Date.now()}`
-                    }
+                {
+                    status: status,
+                    message: `Create bin ${data.binId}`,
+                    type: 'success',
+                    method: 'POST',
+                    id: `post${data.binId}${Date.now()}`
+                }
                 ]);
                 setBinList(prevList => [...prevList, { "binId": data.binId, "contents": data.contents }]);
             })
@@ -67,24 +67,34 @@ function BinTable(props) {
             .then((response) => {
                 // Check if the request was successful
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error(response.status);
                 }
+
+                // if the delete was successful, display an alert
                 props.setAlertList(prevList => [...prevList,
-                    {
-                        status: response.status,
-                        message: `Delete bin ${binId}`,
-                        type: 'success',
-                        method: 'DELETE',
-                        id: `delete${binId}${Date.now()}`
-                    }
+                {
+                    status: response.status,
+                    message: `Delete bin ${binId}`,
+                    type: 'success',
+                    method: 'DELETE',
+                    id: `delete${binId}${Date.now()}`
+                }
                 ]);
-                return response;
-            })
-            .then(() => {
+
+                // update the bin list to remove the deleted bin
                 setBinList(prevList => prevList.filter(item => item.binId !== binId));
             })
             .catch((error) => {
-                console.error('There was a problem with your fetch operation:', error);
+                console.log(error);
+                props.setAlertList(prevList => [...prevList,
+                {
+                    status: error.message,
+                    message: `ERROR ${error.message} attempting to delete bin ${binId}`,
+                    type: 'error',
+                    method: 'DELETE',
+                    id: `delete${binId}${Date.now()}`
+                }
+                ]);
             });
     };
 
@@ -133,13 +143,13 @@ function BinTable(props) {
                     throw new Error('Network response was not ok');
                 }
                 props.setAlertList(prevList => [...prevList,
-                    {
-                        status: response.status,
-                        message: `Update bin contents for ${binId}`,
-                        type: 'success',
-                        method: 'PUT',
-                        id: `put${binId}${Date.now()}`
-                    }
+                {
+                    status: response.status,
+                    message: `Update bin contents for ${binId}`,
+                    type: 'success',
+                    method: 'PUT',
+                    id: `put${binId}${Date.now()}`
+                }
                 ]);
                 return response;
             })
@@ -171,13 +181,13 @@ function BinTable(props) {
                     throw new Error('Network response was not ok');
                 }
                 props.setAlertList(prevList => [...prevList,
-                    {
-                        status: response.status,
-                        message: 'Retrieve list of all bins',
-                        type: 'success',
-                        method: 'GET',
-                        id: `getall${Date.now()}`
-                    }
+                {
+                    status: response.status,
+                    message: 'Retrieve list of all bins',
+                    type: 'success',
+                    method: 'GET',
+                    id: `getall${Date.now()}`
+                }
                 ]);
                 return response.json(); // Parse the response body as JSON
             })
