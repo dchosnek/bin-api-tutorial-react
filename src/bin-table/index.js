@@ -1,6 +1,9 @@
 import './bin-table.css';
 import { useState } from 'react';
+
+// import bootstrap components and icons
 import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
@@ -8,239 +11,27 @@ import Tooltip from 'react-bootstrap/Tooltip';
 
 import { ArrowClockwise, PlusLg } from 'react-bootstrap-icons';
 
+// import child components
 import BinRow from '../bin-row';
 
-import { API_BASE_URL } from '../constants';
-import { Container } from 'react-bootstrap';
+// CRUD operations for bins
+import createBin from './createBin';
+import refreshTable from './readBin';
+import updateBin from './updateBin';
+import deleteBin from './deleteBin';
 
 function BinTable(props) {
+    // list of maps where each map uses keys: binId, contents
+    // initialized as an empty list
     const [binList, setBinList] = useState([]);
 
-    function createBin() {
-        const fetchUrl = `${API_BASE_URL}/bins`;
-        const token = props.token;
-        let status = '';
-        fetch(fetchUrl, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
-        })
-            .then((response) => {
-                // Check if the request was successful
-                if (!response.ok) {
-                    throw new Error(response.status);
-                }
-                status = response.status;
-                return response.json(); // Parse the response body as JSON
-            })
-            .then((data) => {
-                props.setAlertList(prevList => [...prevList,
-                {
-                    status: status,
-                    message: `Create bin ${data.binId}`,
-                    type: 'success',
-                    method: 'POST',
-                    id: `post${data.binId}${Date.now()}`
-                }
-                ]);
-                setBinList(prevList => [...prevList, { "binId": data.binId, "contents": data.contents }]);
-            })
-            .catch((error) => {
-                props.setAlertList(prevList => [...prevList,
-                    {
-                        status: error.message,
-                        message: `ERROR ${error.message} creating a bin`,
-                        type: 'error',
-                        method: 'POST',
-                        id: `post${Date.now()}`
-                    }
-                    ]);
-            });
-    };
-
-    function deleteBin(binId) {
-        const fetchUrl = `${API_BASE_URL}/bins/${binId}`;
-        const token = props.token;
-        fetch(fetchUrl, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
-        })
-            .then((response) => {
-                // Check if the request was successful
-                if (!response.ok) {
-                    throw new Error(response.status);
-                }
-
-                // if the delete was successful, display an alert
-                props.setAlertList(prevList => [...prevList,
-                {
-                    status: response.status,
-                    message: `Delete bin ${binId}`,
-                    type: 'success',
-                    method: 'DELETE',
-                    id: `delete${binId}${Date.now()}`
-                }
-                ]);
-
-                // update the bin list to remove the deleted bin
-                setBinList(prevList => prevList.filter(item => item.binId !== binId));
-            })
-            .catch((error) => {
-                console.log(error);
-                props.setAlertList(prevList => [...prevList,
-                {
-                    status: error.message,
-                    message: `ERROR ${error.message} attempting to delete bin ${binId}`,
-                    type: 'error',
-                    method: 'DELETE',
-                    id: `delete${binId}${Date.now()}`
-                }
-                ]);
-            });
-    };
-
-    const getBinContents = (token, binId) => {
-        const fetchUrl = `${API_BASE_URL}/bins/${binId}`;
-        return fetch(fetchUrl, {
-            method: 'GET', // GET is the default method, so this is optional
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
-        })
-            .then((response) => {
-                // Check if the request was successful
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                props.setAlertList(prevList => [...prevList,
-                    {
-                        status: response.status,
-                        message: `Get bin contents for ${binId}`,
-                        type: 'success',
-                        method: 'GET',
-                        id: `get${binId}${Date.now()}`
-                    }
-                    ]);
-                return response.json(); // Parse the response body as JSON
-            })
-            .then((data) => {
-                return data.contents;
-            })
-            .catch((error) => {
-                console.error('There was a problem with your fetch operation:', error);
-            });
-    };
-
-    function updateBin(binId, contents) {
-        const fetchUrl = `${API_BASE_URL}/bins/${binId}`;
-        const token = props.token;
-        fetch(fetchUrl, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                contents: contents
-            }),
-            credentials: 'include'
-        })
-            .then((response) => {
-                // Check if the request was successful
-                if (!response.ok) {
-                    throw new Error(response.status);
-                }
-                props.setAlertList(prevList => [...prevList,
-                {
-                    status: response.status,
-                    message: `Update bin contents for ${binId}`,
-                    type: 'success',
-                    method: 'PUT',
-                    id: `put${binId}${Date.now()}`
-                }
-                ]);
-
-                // update the bin list to show the bin with updated contents
-                const newArray = binList.map(item =>
-                    item.binId === binId ? { ...item, contents: contents } : item
-                );
-                setBinList(newArray);
-            })
-            .catch((error) => {
-                props.setAlertList(prevList => [...prevList,
-                    {
-                        status: error.message,
-                        message: `ERROR ${error.message} attempting to update bin ${binId}`,
-                        type: 'error',
-                        method: 'PUT',
-                        id: `put${binId}${Date.now()}`
-                    }
-                    ]);
-            });
-    }
-
-    const refreshTable = () => {
-        const fetchUrl = `${API_BASE_URL}/bins`;
-        const token = props.token;
-        fetch(fetchUrl, {
-            method: 'GET', // GET is the default method, so this is optional
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
-        })
-            .then((response) => {
-                // Check if the request was successful
-                if (!response.ok) {
-                    throw new Error(response.status);
-                }
-                props.setAlertList(prevList => [...prevList,
-                {
-                    status: response.status,
-                    message: 'Retrieve list of all bins',
-                    type: 'success',
-                    method: 'GET',
-                    id: `getall${Date.now()}`
-                }
-                ]);
-                return response.json(); // Parse the response body as JSON
-            })
-            .then((data) => {
-                // Map each binId to a promise that resolves to the structure { binId: binId, contents: contents }
-                const contentPromises = data.bins.map(binId =>
-                    getBinContents(token, binId).then(contents => ({
-                        binId: binId,
-                        contents: contents
-                    }))
-                );
-                // Wait for all promises to resolve
-                return Promise.all(contentPromises);
-            })
-            .then(newArray => {
-                setBinList(newArray);
-            })
-            .catch((error) => {
-                props.setAlertList(prevList => [...prevList,
-                    {
-                        status: error.message,
-                        message: `ERROR ${error.message} attempting to retrieve bin list`,
-                        type: 'error',
-                        method: 'GET',
-                        id: `getall${Date.now()}`
-                    }
-                    ]);
-            });
-    };
+    // These functions are used for all bin CRUD operations.
+    // They are defined this way in order to hard-code values into the more
+    // generic CRUD functions imported into this file.
+    const createBinFunc = () => createBin(props.token, props.setAlertList, setBinList);
+    const readAllBinsFunc = () => refreshTable(props.token, props.setAlertList, setBinList)
+    const updateBinFunc = (binId, contents) => updateBin(props.token, props.setAlertList, binList, setBinList, binId, contents);
+    const delBinFunc = (binId) => deleteBin(props.token, props.setAlertList, setBinList, binId);
 
     return (
         <Container>
@@ -252,17 +43,17 @@ function BinTable(props) {
                             <th className='fill-space'>contents</th>
                             <th className='action-col'>
                                 <OverlayTrigger placement='bottom-end' show={!binList.length && props.pageVisible} overlay={<Tooltip>You have no bins. Click here to create one.</Tooltip>}>
-                                    <Button variant='success' className='button-pad' onClick={createBin}><PlusLg /></Button>
+                                    <Button variant='success' className='button-pad' onClick={createBinFunc}><PlusLg /></Button>
                                 </OverlayTrigger>
                                 <OverlayTrigger placement='top' overlay={<Tooltip>Refresh table</Tooltip>}>
-                                    <Button variant='primary' className='button-pad' onClick={refreshTable}><ArrowClockwise /></Button>
+                                    <Button variant='primary' className='button-pad' onClick={readAllBinsFunc}><ArrowClockwise /></Button>
                                 </OverlayTrigger>
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                         {binList.map(e => (
-                            <BinRow binId={e.binId} binContents={e.contents} key={e.binId} delFunc={deleteBin} saveFunc={updateBin} />
+                            <BinRow binId={e.binId} binContents={e.contents} key={e.binId} delFunc={delBinFunc} saveFunc={updateBinFunc} />
                         ))}
                     </tbody>
                 </Table>
